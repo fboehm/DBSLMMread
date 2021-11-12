@@ -6,11 +6,11 @@
 using namespace boost::filesystem;
 using namespace arma;
 
-//' Load armadillo fields, one per chromosome
+//' Load armadillo fields from binary files, one per chromosome
 //' 
 //' @param fieldDir path for the directory that contains the binary armadillo files
 //' @return armadillo field containing 22 fields, one per chromosome
-arma::field < arma::field < arma::mat> > loadFields(fieldDir){
+arma::field < arma::field < arma::mat> > loadBinaries(fieldDir){
   arma::vec filenames = getFilenames(fieldDir);
   arma::field out;
   for (i = 0; i < 22; ++i){
