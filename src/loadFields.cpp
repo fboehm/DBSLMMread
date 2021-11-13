@@ -45,3 +45,19 @@ vector <string> getFilenames(std::string directory){
   return names;
 } 
 
+
+//' Populate a one-dimensional field with one column of a two-dimensional field
+//' 
+//' @param field a two-dimensional field
+//' @param column the column number of the two-dimensional field
+//' @return a one-dimensional field containing the elements from column of two-dimensional field
+
+arma::field <arma::mat> populateField(arma::field <arma::mat> field){
+  int nrow = field.n_rows;
+  arma::field < arma::mat> ff(nrow); 
+  for (uint row = 0; row < nrow; ++row){
+    //populate a one-dim field
+    ff(row) = binary(row, column) //sigma_ss per block
+  }
+  return ff;
+}  
