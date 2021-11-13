@@ -8,10 +8,10 @@ using namespace arma;
 
 //' Load armadillo fields from binary files, one per chromosome
 //' 
-//' @param fieldDir path for the directory that contains the binary armadillo files
+//' @param fieldDir path for the directory that contains the binary armadillo files (and no other files)
 //' @return armadillo field containing 22 fields, one per chromosome
 arma::field < arma::field < arma::mat> > loadBinaries(fieldDir){
-  arma::vec filenames = getFilenames(fieldDir);
+  vector <string> filenames = getFilenames(fieldDir);
   arma::field out;
   for (i = 0; i < 22; ++i){
     bool ok = out(i).load(filenames(i));
@@ -44,3 +44,4 @@ vector <string> getFilenames(std::string directory){
   }
   return names;
 } 
+
