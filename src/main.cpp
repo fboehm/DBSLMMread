@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*
  Deterministic Bayesian Sparse Linear Mixed Model (DBSLMM)
  Copyright (C) 2019  Sheng Yang and Xiang Zhou
