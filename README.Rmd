@@ -1,0 +1,22 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# DBSLMMread
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of DBSLMMread is to read intermediate C++ Armadillo "fields" from 
+`DBSLMMinterval` and, with them, calculate the variances of the predicted 
+values. 
+
