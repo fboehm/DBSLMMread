@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <boost/filesystem.hpp>
+#include "../include/loadFields.h"
 
 using namespace boost::filesystem;
 using namespace arma;
