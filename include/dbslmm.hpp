@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <armadillo>
 
-#include "dtpr.hpp"
+#include "../include/dtpr.hpp"
 
 class PARAM {
 public:
@@ -56,7 +56,6 @@ public:
 	void printHeader(void);
 	void printHelp(void);
 	void Assign(int argc, char ** argv, PARAM &cPar);
-	arma::field <arma::mat> BatchRun(PARAM &cPar);
 };
 
 
