@@ -16,7 +16,7 @@ CXX = g++
 CXXFLAG = -static -fopenmp -O3 -std=c++11 -lm -llapacke -llapack -lblas -Wall
 all: $(OUTPUTD)
 $(OUTPUTD): src/main.o src/calc_asymptotic_variance.o src/dbslmm.o src/dptr.o
-	$(CXX) src/main.o src/calc_asymptotic_variance.o src/dbslmm.o src/dptr.o -o $(OUTPUTD) $(CXXFLAG) -L $(ARMALIB)
+	$(CXX) src/main.o src/calc_asymptotic_variance.o src/dbslmm.o src/dptr.o src/tobool.o -o $(OUTPUTD) $(CXXFLAG) -L $(ARMALIB)
 src/main.o: src/main.cpp
 	$(CXX) -c src/main.cpp -o src/main.o
 
@@ -28,6 +28,9 @@ src/dbslmm.o: src/dbslmm.cpp
 
 src/dtpr.o: src/dtpr.cpp
 	$(CXX) -c src/dtpr.cpp -o src/dtpr.o
+
+src/tobool.o: src/tobool.cpp
+	$(CXX) -c src/tobool.cpp -o src/tobool.o
 
 
 clean:

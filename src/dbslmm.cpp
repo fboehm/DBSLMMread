@@ -22,16 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <ctime>
 #include <math.h>
 
-#include "dtpr.hpp"
-#include "dbslmmfit.hpp"
-#include "dbslmm.hpp"
-#include "tobool.h"
 
 
 #include <armadillo>
 
 #include "../include/dtpr.hpp"
-#include "../include/dbslmmfit.hpp"
 #include "../include/dbslmm.hpp"
 
 using namespace std;
