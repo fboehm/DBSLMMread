@@ -27,7 +27,7 @@ src/dbslmm.o: src/dbslmm.cpp
 	$(CXX) -c src/dbslmm.cpp $(CXXFLAG)
 
 src/dtpr.o: src/dtpr.cpp include/dtpr.hpp
-        $(CXX) -c src/dtpr.cpp $(CXXFLAG)
+	$(CXX) -c src/dtpr.cpp $(CXXFLAG)
 
 
 src/tobool.o: src/tobool.cpp
