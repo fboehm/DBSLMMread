@@ -20,18 +20,9 @@ $(OUTPUTD): src/main.o src/calc_asymptotic_variance.o src/dbslmm.o src/dptr.o sr
 src/main.o: src/main.cpp
 	$(CXX) -c src/main.cpp $(CXXFLAG)
 
-src/calc_asymptotic_variance.o: src/calc_asymptotic_variance.cpp include/calc_asymptotic_variance.h 
-	$(CXX) -c src/calc_asymptotic_variance.cpp -o src/calc_asymptotic_variance.o $(CXXFLAG)
+src/%.o: src/%.cpp include/%.hpp
+	$(CXX) -c %.cpp $(CXXFLAG)
 
-src/dbslmm.o: src/dbslmm.cpp
-	$(CXX) -c src/dbslmm.cpp $(CXXFLAG)
-
-src/dtpr.o: src/dtpr.cpp include/dtpr.hpp
-	$(CXX) -c src/dtpr.cpp $(CXXFLAG)
-
-
-src/tobool.o: src/tobool.cpp
-	$(CXX) -c src/tobool.cpp $(CXXFLAG)
 
 
 clean:
