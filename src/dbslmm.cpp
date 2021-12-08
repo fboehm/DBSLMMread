@@ -27,7 +27,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dbslmm.hpp"
 #include "tobool.h"
 
+
+#include <armadillo>
+
+#include "../include/dtpr.hpp"
+#include "../include/dbslmmfit.hpp"
+#include "../include/dbslmm.hpp"
+
 using namespace std;
+using namespace arma;
 
 DBSLMM::DBSLMM(void) :
 	version("0.3"), date("05/01/2021"), year("2021")
@@ -162,177 +170,3 @@ void DBSLMM::Assign(int argc, char ** argv, PARAM &cPar) {
 	return;
 }
 
-arma::field <arma::mat> DBSLMM::BatchRun(PARAM &cPar) {
-
-	SNPPROC cSP;
-	IO cIO;
-	DBSLMMFIT cDBSF;
-
-	// input check
-	// cout << "Options: " << endl;
-	// cout << "-s:      " << cPar.s << endl;
-	// cout << "-l:      " << cPar.l << endl;
-	// cout << "-r:      " << cPar.r << endl;
-	// cout << "-nsnp:   " << cPar.nsnp << endl;
-	// cout << "-n:      " << cPar.n << endl;
-	// cout << "-mafMax: " << cPar.mafMax << endl;
-	// cout << "-b:      " << cPar.b << endl;
-	// cout << "-h:      " << cPar.h << endl;
-	// cout << "-t:      " << cPar.t << endl;
-	// cout << "-eff:    " << cPar.eff << endl;
-	
-	// check files
-	string ref_fam_str = cPar.r + ".fam";
-	ifstream seffstream(cPar.s.c_str()), leffstream(cPar.l.c_str()), reffstream(ref_fam_str.c_str()), beffstream(cPar.b.c_str());
-	if (cPar.s.size() == 0) {
-		cerr << "ERROR: -s is no parameter!" << endl;
-		exit(1);
-	}
-	if (!beffstream) {
-		cerr << "ERROR: " << cPar.b << " dose not exist!" << endl;
-		exit(1);
-	}
-	if (!seffstream) {
-		cerr << "ERROR: " << cPar.s << " dose not exist!" << endl;
-		exit(1);
-	}
-	if (!reffstream) {
-		cerr << "ERROR: " << cPar.r << " dose not exist!" << endl;
-		exit(1);
-	}
-	if (cPar.b.size() == 0) {
-		cerr << "ERROR: -b is no parameter!" << endl;
-		exit(1);
-	}
-	if (cPar.r.size() == 0) {
-		cerr << "ERROR: " << cPar.r << " dose not exist!" << endl;
-		exit(1);
-	}
-	if (cPar.h > 1 || cPar.h < 0){
-		cerr << "ERROR: -h is not correct (0, 1)!" << endl;
-		exit(1);
-	}
-	if (cPar.t > 100 || cPar.t < 1){
-		cerr << "ERROR: -t is not correct (1, 100)!" << endl;
-		exit(1);
-	}
-	
-	// get sample size of reference panel 
-	char separate[] = "\t";
-	cout << "Reading PLINK FAM file from [" << cPar.r << ".fam]" << endl;
-	int n_ref = cIO.getRow(ref_fam_str);
-	cout << n_ref << " individuals to be included from reference FAM file." << endl;
-	
-	// get SNP of reference panel
-	cout << "Reading PLINK BIM file from [" << cPar.r << ".bim]" << endl;
-	map <string, ALLELE> ref_bim;
-	bool constr = true; 
-	if (abs(cPar.mafMax-1.0) < 1e-10){
-		constr = false; 
-	}
-	cIO.readBim(n_ref, cPar.r, separate, ref_bim, constr);
-	int num_snp_ref = ref_bim.size();
-	cout << num_snp_ref << " SNPs to be included from reference BIM file." << endl;
-
-	// input block file
-	vector <BLOCK> block_dat; 
-	cIO.readBlock(cPar.b, separate, block_dat);
- 
-	// input small effect summary data
-	cout << "Reading summary data of small effect SNPs from [" << cPar.s << "]" << endl;
-	vector <SUMM> summ_s;
-	int n_s = cIO.readSumm(cPar.s, separate, summ_s);
-	vector <POS> inter_s;
-	bool badsnp_s[n_s] = {false}; 
-	cSP.matchRef(summ_s, ref_bim, inter_s, cPar.mafMax, badsnp_s);
-	cout << "After filtering, " << inter_s.size() << " small effect SNPs are selected." << endl;
-	vector <INFO> info_s; 
-	int num_block_s = cSP.addBlock(inter_s, block_dat, info_s); 
-	
-	// output samll effect badsnps 
-	string badsnps_str = cPar.eff + ".badsnps"; 
-	ofstream badsnpsFout(badsnps_str.c_str());
-	for (size_t i = 0; i < summ_s.size(); ++i) {
-		if (badsnp_s[i] == false)
-			badsnpsFout << summ_s[i].snp << " " << 0 << endl;
-	}
-	clearVector(summ_s);
-
-	// large effect
-	vector <POS> inter_l;
-	vector <INFO> info_l; 
-	if (leffstream) {
-		// input large effect summary data
-		cout << "Reading summary data of large effect SNPs from [" << cPar.l << "]" << endl;
-		vector <SUMM> summ_l;
-		int n_l = cIO.readSumm(cPar.l, separate, summ_l);
-		// vector <POS> inter_l;
-		bool badsnp_l[n_l] = {false};
-		cSP.matchRef(summ_l, ref_bim, inter_l, cPar.mafMax, badsnp_l);
-		if (inter_l.size() != 0){
-			int num_block_l = cSP.addBlock(inter_l, block_dat, info_l); 
-			cout << "After filtering, " << inter_l.size() << " large effect SNPs are selected." << endl;
-		} else {
-			cout << "After filtering, no large effect SNP is selected." << endl;
-		}
-		// output large effect badsnps 
-		for (size_t i = 0; i < summ_l.size(); ++i) {
-			if (badsnp_l[i] == false){
-				badsnpsFout << summ_l[i].snp << " " << 1 << endl;
-			}
-		}
-		clearVector(summ_l);
-	}
-	arma::field < arma::mat> out;
-	// output stream
-	string eff_str = cPar.eff + ".txt"; 
-	ofstream effFout(eff_str.c_str());
-	if (inter_l.size() != 0){
-		// fit model
-		vector <EFF> eff_s, eff_l; 
-		vector<int> idv(n_ref);
-		for (int i = 0; i < n_ref; i++) idv[i] = 1; 
-		string bed_str = cPar.r + ".bed";
-		double t_fitting = cIO.getWalltime();
-		double sigma_s = cPar.h / (double)cPar.nsnp;
-		cout << "Fitting model..." << endl;
-		out = cDBSF.est(n_ref, cPar.n, sigma_s, num_block_s, idv, bed_str, info_s, info_l, cPar.t, eff_s, eff_l, cPar.training); 
-		double time_fitting = cIO.getWalltime() - t_fitting;
-		cout << "Fitting time: " << time_fitting << " seconds." << endl;
-
-		// output effect 
-		for (size_t i = 0; i < eff_l.size(); ++i) {
-			double beta_l_noscl = eff_l[i].beta / sqrt(2 * eff_l[i].maf * (1-eff_l[i].maf));
-			if (eff_l[i].snp != "rs" && isinf(beta_l_noscl) == false)
-				effFout << eff_l[i].snp << " " << eff_l[i].a1 << " " << eff_l[i].beta << " " << beta_l_noscl << " " << 1 << endl; 
-		}
-		
-		for (size_t i = 0; i < eff_s.size(); ++i) { 
-			double beta_s_noscl = eff_s[i].beta / sqrt(2 * eff_s[i].maf * (1-eff_s[i].maf));
-			if(eff_s[i].snp.size() != 0 && isinf(beta_s_noscl) == false)
-				effFout << eff_s[i].snp << " " << eff_s[i].a1 << " " << eff_s[i].beta << " " << beta_s_noscl << " " << 0 << endl; 
-		}
-		effFout.close();
-	}
-	if (inter_l.size() == 0 || !leffstream){
-		// fit model
-		vector <EFF> eff_s; 
-		vector<int> idv(n_ref);
-		for (int i = 0; i < n_ref; i++) idv[i] = 1; 
-		string bed_str = cPar.r + ".bed";
-		double t_fitting = cIO.getWalltime();
-		double sigma_s = cPar.h / (double)cPar.nsnp;
-		cout << "Fitting model..." << endl;
-		out = cDBSF.est(n_ref, cPar.n, sigma_s, num_block_s, idv, bed_str, info_s, cPar.t, eff_s, cPar.training); 
-		double time_fitting = cIO.getWalltime() - t_fitting;
-		cout << "Fitting time: " << time_fitting << " seconds." << endl;
-
-		// output effect 
-		for (size_t i = 0; i < eff_s.size(); ++i) { 
-			double beta_s_noscl = eff_s[i].beta / sqrt(2 * eff_s[i].maf * (1-eff_s[i].maf));
-			if(eff_s[i].snp.size() != 0 && isinf(beta_s_noscl) == false)
-				effFout << eff_s[i].snp << " " << eff_s[i].a1 << " " << eff_s[i].beta << " " << beta_s_noscl << " " << 0 << endl; 
-		}
-	}
-	return out;
-}
