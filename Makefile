@@ -23,14 +23,14 @@ src/main.o: src/main.cpp
 src/calc_asymptotic_variance.o: src/calc_asymptotic_variance.cpp include/calc_asymptotic_variance.h 
 	$(CXX) -c src/calc_asymptotic_variance.cpp -o src/calc_asymptotic_variance.o $(CXXFLAG)
 
-src/dbslmm.o: src/dbslmm.cpp
+src/dbslmm.o: src/dbslmm.cpp include/dbslmm.hpp
 	$(CXX) -c src/dbslmm.cpp $(CXXFLAG)
 
 src/dtpr.o: src/dtpr.cpp include/dtpr.hpp
 	$(CXX) -c src/dtpr.cpp $(CXXFLAG)
 
 
-src/tobool.o: src/tobool.cpp
+src/tobool.o: src/tobool.cpp include/tobool.h
 	$(CXX) -c src/tobool.cpp $(CXXFLAG)
 
 
