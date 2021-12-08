@@ -26,13 +26,17 @@
 #include <sys/types.h>
 #include <armadillo>
 #include "../include/calc_asymptotic_variance.h"
-
+#include "../include/dbslmm.hpp"
 
 using namespace std;
 using namespace arma;
 
-int main()
+int main(int argc, char * argv[])
 {
+  DBSLMM cDB;
+  PARAM cPar;
+  cDB.Assign(argc, argv, cPar);
+  
   //int nchr = 22; //number of chromosomes
   int nchr = 1;
   //initialize a arma::field to store outputs for var calcs!
@@ -53,22 +57,20 @@ int main()
     test.row(i) = assembleMatrices(te);
   }
   //var calcs here! 
-  //1. assemble genome-wide matrices from "results"
-  // results is a 22-long field where each entry is itself a 1d field containing 5 matrices
+  //1. assemble genome-wide matrices from "training" & "test"
   arma::field < arma::mat > mats_training = assembleMatrices(training);
   arma::field < arma::mat > mats_test = assembleMatrices(test);
   //2. input matrices to calc_asymptotic_variance
-  arma::mat vv = calc_asymptotic_variance(mats_training(2), 
-                                          arma::trans(mats_training(1)), 
-                                          mats_training(0), 
-                                          cPar.h, 
+  arma::mat vv = calc_asymptotic_variance(mats_training(2), //Sigma_ll
+                                          arma::trans(mats_training(1)), // Sigma_ls 
+                                          mats_training(0), //Sigma_ss
+                                          sigma2_s, 
                                           cPar.n, 
-                                          mats_test(4), 
-                                          mats_test(3));
+                                          mats_test(4), //X_l
+                                          mats_test(3)); // X_s
   //3. write diagonal of var to a csv file
   arma::vec vd = diagvec(vv);
   vd.save("out.csv", csv_ascii);
-  
-  
+
   return EXIT_SUCCESS;
 }
