@@ -2,7 +2,7 @@
 
 #include <armadillo>
 
-#include "../include/calc_asymptotic_variance.h"
+#include "../include/calc_asymptotic_variance.hpp"
 
 using namespace std;
 using namespace arma;

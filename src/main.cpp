@@ -25,7 +25,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <armadillo>
-#include "../include/calc_asymptotic_variance.h"
+#include "../include/calc_asymptotic_variance.hpp"
 #include "../include/dbslmm.hpp"
 
 using namespace std;
