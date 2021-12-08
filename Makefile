@@ -13,10 +13,11 @@ CXX = g++
 #CXX = clang++-11
 objects := $(patsubst src/%.cpp,src/%.o,$(wildcard src/*.cpp))
 
+headers := $(patsubst src/%.cpp,include/%.hpp,$(wildcard src/*.cpp))
 # Set complier flags 
 CXXFLAG = -static -fopenmp -O3 -std=c++11 -lm -llapacke -llapack -lblas -Wall
 all: $(OUTPUTD)
-$(OUTPUTD): $(objects)
+$(OUTPUTD): $(objects) $(headers)
 	$(CXX) $(objects) -o $(OUTPUTD) $(CXXFLAG) -L $(ARMALIB)
 
 
