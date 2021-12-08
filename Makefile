@@ -11,18 +11,13 @@ ARMALIB = /net/mulan/home/yasheng/Cpp/arma/lib
 # Put C++ complier 
 CXX = g++
 #CXX = clang++-11
+objects := $(patsubst src/%.cpp,src/%.o,$(wildcard src/*.cpp))
 
 # Set complier flags 
 CXXFLAG = -static -fopenmp -O3 -std=c++11 -lm -llapacke -llapack -lblas -Wall
 all: $(OUTPUTD)
-$(OUTPUTD): src/main.o src/calc_asymptotic_variance.o src/dbslmm.o src/dptr.o src/tobool.o
-	$(CXX) src/main.o src/calc_asymptotic_variance.o src/dbslmm.o src/dptr.o src/tobool.o -o $(OUTPUTD) $(CXXFLAG) -L $(ARMALIB)
-src/main.o: src/main.cpp
-	$(CXX) -c src/main.cpp $(CXXFLAG)
-
-src/%.o: src/%.cpp include/%.hpp
-	$(CXX) -c %.cpp $(CXXFLAG)
-
+$(OUTPUTD): $(objects)
+	$(CXX) $(objects) -o $(OUTPUTD) $(CXXFLAG) -L $(ARMALIB)
 
 
 clean:
