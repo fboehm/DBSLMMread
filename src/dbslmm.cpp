@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "../include/dtpr.hpp"
 #include "../include/dbslmm.hpp"
-#include "../include/tobool.h"
+#include "../include/tobool.hpp"
 
 using namespace std;
 using namespace arma;
