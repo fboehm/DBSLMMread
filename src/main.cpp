@@ -45,7 +45,8 @@ int main(int argc, char * argv[])
   arma::field < arma::mat> test(nchr, 5);
   double sigma2_s = cPar.h / (double)cPar.nsnp;
   
-  for (int i = 0; i < nchr - 1; ++i){
+//  for (int i = 0; i < nchr; ++i){
+    int i = 0;
     int chr = i + 1;
     std::string filetr ("Chr" + std::to_string(chr) + "_training.dat");
     std::string filete ("Chr" + std::to_string(chr) + "_test.dat");
@@ -65,7 +66,7 @@ int main(int argc, char * argv[])
     
     training.row(i) = assembleMatrices(tr);//store in a two-dimensional field
     test.row(i) = assembleMatrices(te);
-  }
+//  }
   //var calcs here! 
   //1. assemble genome-wide matrices from "training" & "test"
   arma::field < arma::mat > mats_training = assembleMatrices(training);
