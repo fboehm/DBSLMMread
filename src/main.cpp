@@ -52,7 +52,17 @@ int main(int argc, char * argv[])
     arma::field <arma::mat > tr;
     arma::field <arma::mat > te; 
     tr.load(filetr);
+    cout << filetr << endl;
+    cout << "number of elements in tr: " << tr.n_elem << endl;
+    cout << "number of rows in tr: " << tr.n_rows << endl;
+    cout << "number of columns in tr: " << tr.n_cols << endl;
+    
     te.load(filete);
+    cout << filete << endl; 
+    cout << "number of elements in te: " << te.n_elem << endl;
+    cout << "number of rows in te: " << te.n_rows << endl;
+    cout << "number of columns in te: " << te.n_cols << endl;
+    
     training.row(i) = assembleMatrices(tr);//store in a two-dimensional field
     test.row(i) = assembleMatrices(te);
   }
