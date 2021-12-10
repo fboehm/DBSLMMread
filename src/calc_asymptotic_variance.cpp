@@ -187,7 +187,7 @@ arma::mat ConcatenateColumns( arma::field<arma::mat> x ) {
 
 //' Assemble one set of five matrices for one chromosome
 //' 
-//' @details Input is an two-dimensional arma::field, say from one chromosome, where each cell contains an arma::mat
+//' @details Input is a two-dimensional arma::field, say from one chromosome, where each cell contains an arma::mat
 //'     Specifically, it is a k by 5 arma::field, where k is the number of blocks on the chromosome of interest.
 //' @param field a two-dimensional arma::field. See details.
 //' @return a one-dimensional field containing exactly five arma::mat matrices: Sigma_ss, Sigma_sl, Sigma_ll, geno_s, geno_l    
