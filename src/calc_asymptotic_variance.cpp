@@ -55,7 +55,7 @@ arma::mat calc_A_inverse(arma::mat Sigma_ss,
   //determine m_s
   unsigned int m_s = Sigma_ss.n_rows;
   // calculate result
-  arma::mat result = arma::inv(arma::eye(m_s, m_s) / (n * sigma2_s) + Sigma_ss);
+  arma::mat result = arma::inv_sympd(arma::eye(m_s, m_s) / (n * sigma2_s) + Sigma_ss);
   return result;
 }
 
@@ -78,7 +78,7 @@ arma::mat calc_var_betal(arma::mat Sigma_ll,
   //calculate second matrix
   arma::mat big = Sigma_ll - Sigma_ls * A_inverse * arma::trans(Sigma_ls);
   //invert and divide by n
-  arma::mat result = arma::inv(big) / n;
+  arma::mat result = arma::inv_sympd(big) / n;
   return (result);
 }
 
