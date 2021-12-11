@@ -59,7 +59,7 @@ arma::mat calc_A_inverse(const arma::field <arma::mat >& field,
   for( unsigned int i = 0; i < n_blocks; i++) {
     //make the diagonal matrix 
     unsigned int m_s = field(i).n_rows;
-    arma::mat inv_field(i) = arma::inv_sympd(arma::eye(m_s, m_s) / (n * sigma2_s) + field(i));
+    inv_field(i) = arma::inv_sympd(arma::eye(m_s, m_s) / (n * sigma2_s) + field(i));
   }
   arma::mat result = BlockDiag(inv_field);
   return result;
