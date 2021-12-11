@@ -41,12 +41,12 @@ int main(int argc, char * argv[])
   int nchr = 1;
   //initialize a arma::field to store outputs for var calcs!
   
-  arma::field < arma::mat> training(nchr, 5);
-  arma::field < arma::mat> test(nchr, 5);
+  arma::field < arma::mat> training(5000, 5); //5000 is always bigger than the number of LD BLocks in the genome
+  arma::field < arma::mat> test(5000, 5);
   double sigma2_s = cPar.h / (double)cPar.nsnp;
-  
-//  for (int i = 0; i < nchr; ++i){
-    int i = 0;
+  unsigned int row_total = 0; //initialize counter for number of rows in field
+  for (int i = 0; i < nchr; ++i){
+    //int i = 0;
     int chr = i + 1;
     std::string filetr ("Chr" + std::to_string(chr) + "_training.dat");
     std::string filete ("Chr" + std::to_string(chr) + "_test.dat");
@@ -64,9 +64,16 @@ int main(int argc, char * argv[])
     cout << "number of rows in te: " << te.n_rows << endl;
     cout << "number of columns in te: " << te.n_cols << endl;
     
-    training.row(i) = assembleMatrices(tr);//store in a two-dimensional field
-    test.row(i) = assembleMatrices(te);
-//  }
+    unsigned int rows_in_block = te.n_rows;
+    training.rows(row_total, row_total+rows_in_block - 1) = tr;
+    test.rows(row_total, row_total+rows_in_block - 1) = te;
+    row_total = row_total + rows_in_block;
+    
+//    training.row(i) = assembleMatrices(tr);//store in a two-dimensional field
+//    test.row(i) = assembleMatrices(te);
+  }
+  training = training.rows(0, row_total - 1);
+  test = test.rows(0, row_total - 1);
   //var calcs here! 
   //1. assemble genome-wide matrices from "training" & "test"
   arma::field < arma::mat > mats_training = assembleMatrices(training);
@@ -75,6 +82,7 @@ int main(int argc, char * argv[])
   arma::mat vv = calc_asymptotic_variance(mats_training(2), //Sigma_ll
                                           arma::trans(mats_training(1)), // Sigma_ls 
                                           mats_training(0), //Sigma_ss
+                                          training.col(0),
                                           sigma2_s, 
                                           cPar.n, 
                                           mats_test(4), //X_l
