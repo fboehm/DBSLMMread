@@ -204,9 +204,13 @@ arma::field <arma::mat> assembleMatrices(const arma::field < arma::mat>& field){
   arma::field <arma::mat> result(5);
   cout << "field has this number of rows: " << field.n_rows << endl; 
   result(0) = BlockDiag(field.col(0));
+  cout << "result(0) has this dimension: " << result(0).n_rows << " rows & " << result(0).n_cols << " columns" << endl; 
   result(1) = BlockDiag(field.col(1));
+  cout << "result(1) has this dimension: " << result(1).n_rows << " rows & " << result(1).n_cols << " columns" << endl; 
   result(2) = BlockDiag(field.col(2));
+  cout << "result(2) has this dimension: " << result(2).n_rows << " rows & " << result(2).n_cols << " columns" << endl; 
   result(3) = ConcatenateColumns(field.col(3));
+  cout << "result(3) has this dimension: " << result(3).n_rows << " rows & " << result(3).n_cols << " columns" << endl; 
   result(4) = ConcatenateColumns(field.col(4));
   return result;
 } 
