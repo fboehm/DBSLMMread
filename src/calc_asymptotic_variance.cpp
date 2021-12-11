@@ -12,6 +12,7 @@ using namespace arma;
 //' @param Sigma_ll Sigma_ll matrix for the whole genome
 //' @param Sigma_ls Sigma_ls matrix for the whole genome
 //' @param Sigma_ss Sigma_ss matrix for the whole genome
+//' @param Sigma_ss_blockwise a one-dimensional field containing blockwise Sigma_ss matrices
 //' @param sigma2_s estimated value of sigma^2_s
 //' @param n sample size for observed data (not the reference panel)
 //' @param Xl_test genotypes matrix for large effect SNPs for test subjects
@@ -20,12 +21,13 @@ using namespace arma;
 
 arma::mat calc_asymptotic_variance(arma::mat Sigma_ll, 
                                    arma::mat Sigma_ls, 
-                                   arma::mat Sigma_ss, 
+                                   arma::mat Sigma_ss,
+                                   arma::field <arma::mat > Sigma_ss_blockwise,
                                    double sigma2_s, 
                                    unsigned int n,
                                    arma::mat Xl_test, 
                                    arma::mat Xs_test){
-  arma::mat Ainv = calc_A_inverse(Sigma_ss, sigma2_s, n);
+  arma::mat Ainv = calc_A_inverse(Sigma_ss_blockwise, sigma2_s, n);
   arma::mat var_bl = calc_var_betal(Sigma_ll, 
                                     Sigma_ls, 
                                     Sigma_ss, 
@@ -43,21 +45,28 @@ arma::mat calc_asymptotic_variance(arma::mat Sigma_ll,
 
 //' Calculate A inverse matrix
 //' 
-//' @details (sigma^{-2}n^{-1} I_ms + Sigma_ss) = A.
-//' @param Sigma_ss Sigma_ss matrix for a single LD block
+//' @details (sigma^{-2}n^{-1} I_ms + Sigma_ss) = A. Here, we use the block diagonal structure
+//' @param field a one-dimensional armadillo field for the entire genome. Each entry corresponds to a single LD block
 //' @param sigma2_s estimate of sigma^2_s
 //' @param n sample size
 //' @return A inverse matrix
 
-arma::mat calc_A_inverse(arma::mat Sigma_ss, 
+arma::mat calc_A_inverse(arma::field <arma::mat > field, 
                          double sigma2_s, 
-                         unsigned int n){
-  //determine m_s
-  unsigned int m_s = Sigma_ss.n_rows;
-  // calculate result
-  arma::mat result = arma::inv_sympd(arma::eye(m_s, m_s) / (n * sigma2_s) + Sigma_ss);
+                         unsigned int n)
+  {
+  unsigned int n_blocks = field.n_elem;
+  arma::field <arma::mat> inv_field;
+  for( unsigned int i = 0; i < n_blocks; i++) {
+    //make the diagonal matrix 
+    unsigned int m_s = field(i).n_rows;
+    arma::mat inv_field(i) = arma::inv_sympd(arma::eye(m_s, m_s) / (n * sigma2_s) + field(i));
+  }
+  arma::mat result = BlockDiag(inv_field);
   return result;
 }
+
+
 
 
 
