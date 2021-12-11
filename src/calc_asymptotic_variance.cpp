@@ -55,7 +55,7 @@ arma::mat calc_A_inverse(const arma::field <arma::mat >& field,
                          double sigma2_s, 
                          unsigned int n)  {
   unsigned int n_blocks = field.n_elem;
-  arma::field <arma::mat> inv_field;
+  arma::field <arma::mat> inv_field(n_blocks);
   for( unsigned int i = 0; i < n_blocks; i++) {
     //make the diagonal matrix 
     unsigned int m_s = field(i).n_rows;
