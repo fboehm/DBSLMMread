@@ -202,6 +202,7 @@ arma::mat ConcatenateColumns( const arma::field<arma::mat>& x ) {
 
 arma::field <arma::mat> assembleMatrices(const arma::field < arma::mat>& field){
   arma::field <arma::mat> result(5);
+  cout << "field has this number of rows: " << field.n_rows << endl; 
   result(0) = BlockDiag(field.col(0));
   result(1) = BlockDiag(field.col(1));
   result(2) = BlockDiag(field.col(2));
