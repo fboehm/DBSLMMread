@@ -73,12 +73,15 @@ int main(int argc, char * argv[])
 //    test.row(i) = assembleMatrices(te);
   }
   training = training.rows(0, row_total - 1);
+  cout << "training has this many rows: " << row_total << endl;
   test = test.rows(0, row_total - 1);
+  cout << "test has this many rows: " << row_total << endl;  
   //var calcs here! 
   //1. assemble genome-wide matrices from "training" & "test"
   arma::field < arma::mat > mats_training = assembleMatrices(training);
   arma::field < arma::mat > mats_test = assembleMatrices(test);
   //2. input matrices to calc_asymptotic_variance
+  cout << "Starting asymptotic variance calculations..." << endl; 
   arma::mat vv = calc_asymptotic_variance(mats_training(2), //Sigma_ll
                                           arma::trans(mats_training(1)), // Sigma_ls 
                                           mats_training(0), //Sigma_ss
