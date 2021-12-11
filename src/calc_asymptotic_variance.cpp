@@ -19,14 +19,14 @@ using namespace arma;
 //' @param Xs_test genotypes matrix for small effect SNPs for test subjects
 //' @return variance of predicted y values
 
-arma::mat calc_asymptotic_variance(arma::mat Sigma_ll, 
-                                   arma::mat Sigma_ls, 
-                                   arma::mat Sigma_ss,
-                                   arma::field <arma::mat > Sigma_ss_blockwise,
+arma::mat calc_asymptotic_variance(const arma::mat& Sigma_ll, 
+                                   const arma::mat& Sigma_ls, 
+                                   const arma::mat& Sigma_ss,
+                                   const arma::field <arma::mat >& Sigma_ss_blockwise,
                                    double sigma2_s, 
                                    unsigned int n,
-                                   arma::mat Xl_test, 
-                                   arma::mat Xs_test){
+                                   const arma::mat& Xl_test, 
+                                   const arma::mat& Xs_test){
   arma::mat Ainv = calc_A_inverse(Sigma_ss_blockwise, sigma2_s, n);
   arma::mat var_bl = calc_var_betal(Sigma_ll, 
                                     Sigma_ls, 
@@ -51,10 +51,9 @@ arma::mat calc_asymptotic_variance(arma::mat Sigma_ll,
 //' @param n sample size
 //' @return A inverse matrix
 
-arma::mat calc_A_inverse(arma::field <arma::mat > field, 
+arma::mat calc_A_inverse(const arma::field <arma::mat >& field, 
                          double sigma2_s, 
-                         unsigned int n)
-  {
+                         unsigned int n)  {
   unsigned int n_blocks = field.n_elem;
   arma::field <arma::mat> inv_field;
   for( unsigned int i = 0; i < n_blocks; i++) {
@@ -79,11 +78,11 @@ arma::mat calc_A_inverse(arma::field <arma::mat > field,
 //' @param n sample size
 //' @return covariance matrix
 
-arma::mat calc_var_betal(arma::mat Sigma_ll, 
-                      arma::mat Sigma_ls, 
-                      arma::mat Sigma_ss,
-                      arma::mat A_inverse,
-                      unsigned int n){
+arma::mat calc_var_betal(const arma::mat& Sigma_ll, 
+                         const arma::mat& Sigma_ls, 
+                         const arma::mat& Sigma_ss,
+                         const arma::mat& A_inverse,
+                         unsigned int n){
   //calculate second matrix
   arma::mat big = Sigma_ll - Sigma_ls * A_inverse * arma::trans(Sigma_ls);
   //invert and divide by n
@@ -101,12 +100,12 @@ arma::mat calc_var_betal(arma::mat Sigma_ll,
 //' @param var_bl variance of beta hat l
 //' @return covariance matrix
   
-arma::mat calc_var_betas(arma::mat Sigma_ss, 
-                         arma::mat Sigma_ls,
-                         arma::mat A_inverse,
-                         double sigma2_s,
-                         unsigned int n,
-                         arma::mat var_bl){
+  arma::mat calc_var_betas(const arma::mat& Sigma_ss, 
+                           const arma::mat& Sigma_ls,
+                           const arma::mat& A_inverse,
+                           double sigma2_s,
+                           unsigned int n,
+                           const arma::mat& var_bl){
   arma::mat small = arma::trans(Sigma_ls) - Sigma_ss * A_inverse * arma::trans(Sigma_ls);
   arma::mat term2 = small * var_bl * arma::trans(small);
   arma::mat term1 = Sigma_ss - Sigma_ss * A_inverse * Sigma_ss;
@@ -121,7 +120,7 @@ arma::mat calc_var_betas(arma::mat Sigma_ss,
 //' @return a block diagonal matrix
 //' @reference https://stackoverflow.com/questions/29198893/block-diagonal-matrix-armadillo
 
-arma::mat BlockDiag( arma::field<arma::mat> x ) {
+arma::mat BlockDiag( const arma::field<arma::mat>& x ) {
   
   unsigned int len = x.n_elem;
   int drow = 0;
@@ -159,7 +158,7 @@ arma::mat BlockDiag( arma::field<arma::mat> x ) {
 //' @param x a field of matrices, possibly of different sizes, but all with the same number of rows. 
 //' @return a matrix
 
-arma::mat ConcatenateColumns( arma::field<arma::mat> x ) {
+arma::mat ConcatenateColumns( const arma::field<arma::mat>& x ) {
   
   unsigned int len = x.n_elem;
   //unsigned int nrow = x(1).n_rows;//problem!
@@ -201,7 +200,7 @@ arma::mat ConcatenateColumns( arma::field<arma::mat> x ) {
 //' @param field a two-dimensional arma::field. See details.
 //' @return a one-dimensional field containing exactly five arma::mat matrices: Sigma_ss, Sigma_sl, Sigma_ll, geno_s, geno_l    
 
-arma::field <arma::mat> assembleMatrices(arma::field < arma::mat> field){
+arma::field <arma::mat> assembleMatrices(const arma::field < arma::mat>& field){
   arma::field <arma::mat> result(5);
   result(0) = BlockDiag(field.col(0));
   result(1) = BlockDiag(field.col(1));
