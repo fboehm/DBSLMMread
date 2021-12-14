@@ -91,6 +91,25 @@ arma::mat calc_var_betal(arma::mat Sigma_ll,
   return (result);
 }
 
+//' Calculate products with fields for block diagonal matrices
+//' 
+//' @param matrix1_blocks one-dimensional field containing the blocks for constructing matrix1
+//' @param A_inverse_blocks one-dimensional field containing the blocks for constructing A inverse
+//' @param matrix2_blocks one-dimensional field containing the blocks for constructing matrix2
+//' @return a one-dimensional field containing the blocks for constructing the matrix product matrix1 * Ainverse * matrix2
+//' @details note the transpose in the third matrix when defining result(i)
+
+arma::field < arma::mat > calc_matrix1_A_inverse_matrix2(arma::field <arma::mat> matrix1_blocks, 
+                                                           arma::field <arma::mat> A_inverse_blocks,
+                                                           arma::field <arma::mat> matrix2_blocks){
+  unsigned int n_blocks = Sigma_ls_blocks.n_elem;
+  arma::field <arma::mat> result(n_blocks);
+  for (i=0; i < n_blocks; ++i){
+    result(i) = matrix1_blocks(i) * A_inverse_blocks(i) * arma::trans(matrix2_blocks(i));
+  }
+  return(result);
+}
+
 //' Calculate variance of coefficient estimator for small effects
 //' 
 //' @param Sigma_ss Sigma_ss matrix 
