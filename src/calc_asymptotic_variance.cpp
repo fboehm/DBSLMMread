@@ -49,7 +49,7 @@ arma::mat calc_asymptotic_variance(arma::mat Sigma_ll,
 //' @param field a one-dimensional armadillo field for the entire genome. Each entry corresponds to a single LD block
 //' @param sigma2_s estimate of sigma^2_s
 //' @param n sample size
-//' @return A inverse matrix
+//' @return a one-dimensional arma::field containing blocks for A inverse matrix
 
 arma::mat calc_A_inverse(arma::field <arma::mat > field, 
                          double sigma2_s, 
@@ -62,8 +62,8 @@ arma::mat calc_A_inverse(arma::field <arma::mat > field,
     unsigned int m_s = field(i).n_rows;
     arma::mat inv_field(i) = arma::inv_sympd(arma::eye(m_s, m_s) / (n * sigma2_s) + field(i));
   }
-  arma::mat result = BlockDiag(inv_field);
-  return result;
+
+  return inv_field;
 }
 
 
