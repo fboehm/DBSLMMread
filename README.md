@@ -7,5 +7,5 @@
 <!-- badges: end -->
 
 The goal of DBSLMMread is to read intermediate C++ Armadillo “fields”
-from `DBSLMMinterval` and, with them, calculate the variances of the
-predicted values.
+from `DBSLMM` and, with them, calculate the variances of the predicted
+values using the DBSLMM model.
