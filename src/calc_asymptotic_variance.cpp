@@ -58,12 +58,12 @@ arma::mat calc_A_inverse(arma::field <arma::mat > field,
   unsigned int n_blocks = field.n_elem;
   arma::field <arma::mat> inv_field;
   for( unsigned int i = 0; i < n_blocks; i++) {
-    //make the diagonal matrix 
+    //do not make the diagonal matrix! 
     unsigned int m_s = field(i).n_rows;
     arma::mat inv_field(i) = arma::inv_sympd(arma::eye(m_s, m_s) / (n * sigma2_s) + field(i));
   }
 
-  return inv_field;
+  return(inv_field);
 }
 
 
@@ -83,11 +83,12 @@ arma::mat calc_var_betal(arma::mat Sigma_ll,
                       arma::field <arma::mat> Sigma_ls_blocks, 
                       arma::field <arma::mat> A_inverse_blocks,
                       unsigned int n){
-  arma::mat Sigma_ls_Ainv_Sigma_sl = calc_matrix1_A_inverse_matrix2(Sigma_ls_blocks, A_inverse_blocks, Sigma_ls_blocks)
+  arma::mat Sigma_ls_Ainv_Sigma_sl_blocks = calc_matrix1_A_inverse_matrix2(Sigma_ls_blocks, A_inverse_blocks, Sigma_ls_blocks)
+  arma::mat Sigma_ls_Ainv_Sigma_sl = BlockDiag(Sigma_ls_Ainv_Sigma_sl_blocks);
   //calculate second matrix
   arma::mat big = Sigma_ll - Sigma_ls_A_inv_Sigma_sl;
   //invert and divide by n
-  arma::mat result = arma::inv_sympd(big) / n;
+  arma::mat result = arma::inv_sympd(big) / n; // we invert a ml by ml matrix - no problem!
   return (result);
 }
 
