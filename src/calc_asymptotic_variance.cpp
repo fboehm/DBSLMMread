@@ -132,15 +132,15 @@ arma::mat calc_var_betas(arma::field <arma::mat> Sigma_ss_blocks,
 //  arma::mat Sigma_ss_A_inv_Sigma_sl = BlockDiag(Sigma_ss_A_inv_Sigma_sl_blocks);
   arma::field <arma::mat> Sigma_ss_A_inv_Sigma_ss_blocks = calc_matrix1_A_inverse_matrix2(Sigma_ss_blocks, A_inverse_blocks, Sigma_ss_blocks);
   arma::field <arma::mat> result(n_blocks);
-  for (i = 0; i < n_blocks; ++i){
+  for (i = 0; i < n_blocks; ++i){ //blockwise calculations
     arma::mat small = arma::trans(Sigma_ls_blocks(i)) - Sigma_ss_A_inv_Sigma_sl(i); //small is ms by ml matrix
-    
+    arma::mat term2 = small * var_bl * arma::trans(small);
 
   }
-  arma::mat small = arma::trans(Sigma_ls) - Sigma_ss_A_inv_Sigma_sl;
-  arma::mat term2 = small * var_bl * arma::trans(small); //term2 is ms by ms matrix!
-  arma::mat term1 = Sigma_ss - Sigma_ss * A_inverse * Sigma_ss;
-  arma::mat result = sigma2_s * sigma2_s * n * (term1 + term2);
+//  arma::mat small = arma::trans(Sigma_ls) - Sigma_ss_A_inv_Sigma_sl;
+//  arma::mat term2 = small * var_bl * arma::trans(small); //term2 is ms by ms matrix!
+//  arma::mat term1 = Sigma_ss - Sigma_ss * A_inverse * Sigma_ss;
+//  arma::mat result = sigma2_s * sigma2_s * n * (term1 + term2);
   return (result);
 }
 
